@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Social Energy Type · Romantic Version</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111111;
+      --muted:#666666;
+      --border:#e9e9e9;
+
+      --red:#e53935;
+      --gray:#6b6f76;
+
+      --btnText:#ffffff;
+
+      --shadow: 0 10px 28px rgba(0,0,0,.06);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+      line-height:1.55;
+    }
+
+    .wrap{
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    header{
+      padding: 14px 4px 10px;
+      margin-bottom: 18px;
+    }
+    .title{
+      font-size: 26px;
+      font-weight: 750;
+      letter-spacing: .2px;
+      margin: 0 0 6px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size: 14px;
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      box-shadow: var(--shadow);
+      background:#fff;
+    }
+
+    .sectionTag{
+      display:inline-block;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      background:#fff;
+    }
+
+    .qTitle{
+      font-size: 18px;
+      font-weight: 760;
+      margin: 6px 0 10px;
+    }
+
+    .qDesc{
+      margin: 0 0 14px;
+      color:#222;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .choices{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      border-radius: 14px;
+      padding: 14px 14px;
+      text-align:left;
+      cursor:pointer;
+      color: var(--btnText);
+      font-size: 15px;
+      font-weight: 680;
+      letter-spacing: .2px;
+      transition: transform .06s ease, filter .15s ease;
+    }
+    .btn:active{ transform: scale(.99); }
+
+    .btn-red{ background: var(--red); }
+    .btn-gray{ background: var(--gray); }
+
+    .btn small{
+      display:block;
+      font-weight: 520;
+      opacity:.92;
+      margin-top: 6px;
+      letter-spacing: 0;
+    }
+
+    .footerBar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .link{
+      color:#111;
+      text-decoration:none;
+      border-bottom: 1px dashed #bbb;
+    }
+    .link:hover{ opacity:.85; }
+
+    .resultTitle{
+      font-size: 20px;
+      font-weight: 820;
+      margin: 8px 0 8px;
+    }
+    .resultHint{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .pillRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top: 10px;
+    }
+    .pill{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      color:#222;
+      background:#fff;
+    }
+
+    .topActions{
+      display:flex;
+      gap:10px;
+      margin-top: 12px;
+      flex-wrap:wrap;
+    }
+    .ghostBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      color:#111;
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 650;
+      font-size: 13px;
+    }
+    .ghostBtn:hover{ filter: brightness(.98); }
+
+    @media (min-width: 720px){
+      .choices{ gap: 12px; }
+      .btn{ padding: 16px 16px; }
+      .title{ font-size: 28px; }
+      .qTitle{ font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="title">Social Energy Type · Romantic Version</h1>
+      <p class="subtitle">designed by Pokemon Saturday Club<br/>（20 题 · 跳转式 · 单属性收敛）</p>
+
+      <div class="topActions">
+        <button class="ghostBtn" id="restartBtn">重新开始</button>
+        <button class="ghostBtn" id="copyLinkBtn">复制当前题目链接</button>
+      </div>
+    </header>
+
+    <main class="card" id="app" aria-live="polite"></main>
+
+    <div class="footerBar">
+      <span id="progressText">Ready</span>
+      <a class="link" href="#Q1" id="goQ1Link">跳到 Q1</a>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // Data
+    // -----------------------------
+    const QUIZ = {
+      meta: {
+        title: "Social Energy Type · Romantic Version",
+        subtitle: "designed by Pokemon Saturday Club（20 题 · 跳转式 · 单属性收敛）",
+      },
+
+      // Question nodes
+      nodes: {
+        // Q1–Q4
+        Q1: {
+          section: "序章 · 初入新世界",
+          title: "Q1｜序章 · 初入新世界",
+          desc:
+`此刻你来到一个陌生的环境。
+周围的人让你感到好奇，空气中充满未展开的关系。
+你会如何开始社交？`,
+          choices: [
+            { label: "A", text: "顺着气氛自然靠近，话题像被点亮一样展开", next: "Q2" },
+            { label: "B", text: "先站在一旁感受流动，等合适的时机再进入", next: "Q3" },
+            { label: "C", text: "找一个让自己舒服的位置，让世界慢慢靠近", next: "Q4" },
+          ]
+        },
+
+        Q2: {
+          section: "序章 · 初入新世界",
+          title: "Q2｜互动的第一道回声",
+          desc: "当有人向你投来一个眼神、一句话、一个信号：",
+          choices: [
+            { label: "A", text: "我会立刻回应，互动像弹簧一样来回", next: "Q5" },
+            { label: "B", text: "我会回应，但更在意“这份回应是否被看见”", next: "Q6" },
+          ]
+        },
+
+        Q3: {
+          section: "序章 · 初入新世界",
+          title: "Q3｜你在关系中的形态",
+          desc: "在不同的人之间，你更像：",
+          choices: [
+            { label: "A", text: "会随环境自然变化的存在，轻松融入", next: "Q7" },
+            { label: "B", text: "稳定在场的陪伴者，像植物一样慢慢生长", next: "Q8" },
+          ]
+        },
+
+        Q4: {
+          section: "序章 · 初入新世界",
+          title: "Q4｜靠近你的人通常会说",
+          desc: "有人走近你后，最常出现的感受是：",
+          choices: [
+            { label: "A", text: "“这里好像安静下来了。”", next: "Q9" },
+            { label: "B", text: "“这个人脑子里好像有很多结构。”", next: "Q10" },
+          ]
+        },
+
+        // 分支一（高互动能量）
+        Q5: {
+          section: "分支一｜高互动能量（皮卡丘 / 喵喵）",
+          title: "Q5｜互动的节奏",
+          desc: "你的互动更像哪种画面？",
+          choices: [
+            { label: "A", text: "一来一回，电流在空气中跳跃", next: "Q11" },
+            { label: "B", text: "我在互动中调节氛围，让场面保持平衡", next: "Q12" },
+          ]
+        },
+
+        Q6: {
+          section: "分支一｜高互动能量（皮卡丘 / 喵喵）",
+          title: "Q6｜你更害怕哪种瞬间？",
+          desc: "",
+          choices: [
+            { label: "A", text: "空气突然冷却、话题掉在地上", next: "Q11" },
+            { label: "B", text: "自己的存在悄悄被忽略", next: "Q12" },
+          ]
+        },
+
+        Q11: {
+          section: "分支一｜高互动能量（皮卡丘 / 喵喵）",
+          title: "Q11｜瞬发能量确认",
+          desc: "别人形容与你互动时，最接近的是：",
+          choices: [
+            { label: "A", text: "“好快，好顺利，根本停不下来。”", next: "Q17" },
+            { label: "B", text: "“像被立刻接住了一样。”", next: "Q17" },
+          ]
+        },
+
+        Q12: {
+          section: "分支一｜高互动能量（皮卡丘 / 喵喵）",
+          title: "Q12｜柔性面具确认",
+          desc: "你在社交中更常选择：",
+          choices: [
+            { label: "A", text: "把真实想法轻轻包起来，过会儿再说", next: "Q18" },
+            { label: "B", text: "先照顾别人感受，再考虑自己", next: "Q18" },
+          ]
+        },
+
+        // 分支二（适配与共生）
+        Q7: {
+          section: "分支二｜适配与共生（伊布 / 妙蛙种子）",
+          title: "Q7｜在不同世界之间",
+          desc: "当你切换社交圈时，你更像：",
+          choices: [
+            { label: "A", text: "自动调整形态，几乎不用思考", next: "Q13" },
+            { label: "B", text: "保持原样，让关系慢慢适应你", next: "Q14" },
+          ]
+        },
+
+        Q8: {
+          section: "分支二｜适配与共生（伊布 / 妙蛙种子）",
+          title: "Q8｜当情绪靠近你",
+          desc: "有人情绪低落时，你更自然的状态是：",
+          choices: [
+            { label: "A", text: "坐在他身边，让情绪慢慢落地", next: "Q14" },
+            { label: "B", text: "很快理解他的处境，并用他能接受的方式回应", next: "Q13" },
+          ]
+        },
+
+        Q13: {
+          section: "分支二｜适配与共生（伊布 / 妙蛙种子）",
+          title: "Q13｜映射型能量确认",
+          desc: "别人对你的常见评价是：",
+          choices: [
+            { label: "A", text: "“你好像能理解所有人。”", next: "Q17" },
+            { label: "B", text: "“你太圆滑了，有点看不清你。”", next: "Q17" },
+          ]
+        },
+
+        Q14: {
+          section: "分支二｜适配与共生（伊布 / 妙蛙种子）",
+          title: "Q14｜共生型能量确认",
+          desc: "你的存在更像：",
+          choices: [
+            { label: "A", text: "一片稳定的自然环境", next: "Q18" },
+            { label: "B", text: "一种温和却有坚持的陪伴", next: "Q18" },
+          ]
+        },
+
+        // 分支三（低刺激与高密度）
+        Q9: {
+          section: "分支三｜低刺激与高密度（呆呆兽 / 可达鸭）",
+          title: "Q9｜你的“舒服感”更接近",
+          desc: "",
+          choices: [
+            { label: "A", text: "一杯慢慢喝完的红酒", next: "Q15" },
+            { label: "B", text: "柔和的灯光，让现实变得模糊一点", next: "Q15" },
+          ]
+        },
+
+        Q10: {
+          section: "分支三｜低刺激与高密度（呆呆兽 / 可达鸭）",
+          title: "Q10｜你的思考方式更像",
+          desc: "",
+          choices: [
+            { label: "A", text: "内部结构清晰，但输出有跳跃", next: "Q16" },
+            { label: "B", text: "理性、乐观，但容易信息过载", next: "Q16" },
+          ]
+        },
+
+        Q15: {
+          section: "分支三｜低刺激与高密度（呆呆兽 / 可达鸭）",
+          title: "Q15｜Comfy 场确认",
+          desc: "靠近你的人，往往会：",
+          choices: [
+            { label: "A", text: "放慢节奏，不再急着做决定", next: "Q17" },
+            { label: "B", text: "暂时忘记烦恼，哪怕只是片刻", next: "Q17" },
+          ]
+        },
+
+        Q16: {
+          section: "分支三｜低刺激与高密度（呆呆兽 / 可达鸭）",
+          title: "Q16｜理性溢出场确认",
+          desc: "靠近你的人，常常会：",
+          choices: [
+            { label: "A", text: "感到你理解得很深，但表达直接", next: "Q18" },
+            { label: "B", text: "觉得你聪明，却需要一点时间跟上", next: "Q18" },
+          ]
+        },
+
+        // 终章
+        Q17: {
+          section: "终章｜能量场收敛（保证单结果）",
+          title: "Q17｜你带给世界的第一层变化",
+          desc: "更接近哪一句？",
+          choices: [
+            { label: "A", text: "空气被点亮了", next: "R-PIKACHU" },
+            { label: "B", text: "世界变慢了", next: "R-SLOWPOKE" },
+            { label: "C", text: "情绪被稳稳接住", next: "R-BULBASAUR" },
+          ]
+        },
+
+        Q18: {
+          section: "终章｜能量场收敛（保证单结果）",
+          title: "Q18｜你更像哪种存在方式？",
+          desc: "",
+          choices: [
+            { label: "A", text: "随环境变化而变化", next: "R-EEVEE" },
+            { label: "B", text: "温柔地包裹他人", next: "R-MEOWTH" },
+            { label: "C", text: "在理性中偶尔溢出", next: "R-PSYDUCK" },
+          ]
+        },
+
+        Q19: {
+          section: "终章｜能量场收敛（保证单结果）",
+          title: "Q19｜如果用一个“场景”形容你",
+          desc: "",
+          choices: [
+            { label: "A", text: "热闹而有回声的空间", next: "R-PIKACHU" },
+            { label: "B", text: "安静舒适的角落", next: "R-SLOWPOKE" },
+            { label: "C", text: "稳定生长的花园", next: "R-BULBASAUR" },
+            { label: "D", text: "不同镜面折射出的同一人", next: "R-EEVEE" },
+            { label: "E", text: "柔软却精致的舞台", next: "R-MEOWTH" },
+            { label: "F", text: "结构复杂的思考室", next: "R-PSYDUCK" },
+          ]
+        },
+
+        Q20: {
+          section: "终章｜能量场收敛（保证单结果）",
+          title: "Q20｜最后一题 · 选择你更靠近的词",
+          desc: "",
+          choices: [
+            { label: "A", text: "回弹", next: "R-PIKACHU" },
+            { label: "B", text: "安慰", next: "R-SLOWPOKE" },
+            { label: "C", text: "共生", next: "R-BULBASAUR" },
+            { label: "D", text: "适配", next: "R-EEVEE" },
+            { label: "E", text: "温柔", next: "R-MEOWTH" },
+            { label: "F", text: "理性", next: "R-PSYDUCK" },
+          ]
+        },
+      },
+
+      // Result nodes (placeholders; you can paste your full result text later)
+      results: {
+        "R-PIKACHU": {
+          name: "皮卡丘",
+          code: "R-皮卡丘",
+          hint:
+`你走进场域时，空气会更快闭合回路。
+互动像弹簧：对方给你一个信号，你会立刻回弹。`
+        },
+        "R-SLOWPOKE": {
+          name: "呆呆兽",
+          code: "R-呆呆兽",
+          hint:
+`你带来一种 Comfy 的降噪感。
+靠近你的人常会放慢节奏，暂时把烦恼放在门外。`
+        },
+        "R-BULBASAUR": {
+          name: "妙蛙种子",
+          code: "R-妙蛙种子",
+          hint:
+`你像一片稳定的自然环境。
+情绪在你这里可以落地，关系在你这里慢慢生长。`
+        },
+        "R-EEVEE": {
+          name: "伊布",
+          code: "R-伊布",
+          hint:
+`你像镜面：能适配，也能映射。
+别人会觉得被理解，但也可能对你的“真实立场”感到好奇。`
+        },
+        "R-MEOWTH": {
+          name: "喵喵",
+          code: "R-喵喵",
+          hint:
+`你用温柔包裹关系。
+你会先照顾他人的感受，让场面安全、精致、可持续。`
+        },
+        "R-PSYDUCK": {
+          name: "可达鸭",
+          code: "R-可达鸭",
+          hint:
+`你是理性密度很高的场域。
+你理解得深，但输出有时直接或跳跃，让人短暂困惑。`
+        }
+      }
+    };
+
+    // -----------------------------
+    // Helpers
+    // -----------------------------
+    const app = document.getElementById("app");
+    const progressText = document.getElementById("progressText");
+    const restartBtn = document.getElementById("restartBtn");
+    const copyLinkBtn = document.getElementById("copyLinkBtn");
+
+    function getRoute(){
+      const hash = location.hash.replace("#", "").trim();
+      return hash || "Q1";
+    }
+
+    function setRoute(id){
+      location.hash = "#" + id;
+    }
+
+    function isQuestion(id){
+      return Boolean(QUIZ.nodes[id]);
+    }
+
+    function isResult(id){
+      return Boolean(QUIZ.results[id]);
+    }
+
+    function buttonClassByIndex(i){
+      // A is red; others are gray (your color rule)
+      return i === 0 ? "btn btn-red" : "btn btn-gray";
+    }
+
+    function render(){
+      const route = getRoute();
+
+      // Update footer
+      if (route.startsWith("Q")){
+        progressText.textContent = route + " / Q20";
+      } else {
+        progressText.textContent = "Result";
+      }
+
+      if (isQuestion(route)){
+        const q = QUIZ.nodes[route];
+
+        app.innerHTML = `
+          <div class="sectionTag">${escapeHTML(q.section || "")}</div>
+          <div class="qTitle">${escapeHTML(q.title)}</div>
+          ${q.desc ? `<p class="qDesc">${escapeHTML(q.desc)}</p>` : ""}
+          <div class="choices" id="choices"></div>
+        `;
+
+        const choicesEl = document.getElementById("choices");
+        q.choices.forEach((c, idx) => {
+          const btn = document.createElement("button");
+          btn.className = buttonClassByIndex(idx);
+          btn.type = "button";
+          btn.innerHTML = `
+            ${escapeHTML(c.label)}. ${escapeHTML(c.text)}
+            <small>→ ${escapeHTML(prettyNextLabel(c.next))}</small>
+          `;
+          btn.addEventListener("click", () => setRoute(c.next));
+          choicesEl.appendChild(btn);
+        });
+
+        return;
+      }
+
+      if (isResult(route)){
+        const r = QUIZ.results[route];
+        app.innerHTML = `
+          <div class="sectionTag">结果页</div>
+          <div class="resultTitle">${escapeHTML(r.code)} · ${escapeHTML(r.name)}</div>
+          <p class="resultHint">${escapeHTML(r.hint || "")}</p>
+
+          <div class="pillRow">
+            <span class="pill">单属性 · 单匹配</span>
+            <span class="pill">Social Energy Type</span>
+            <span class="pill">Romantic Version</span>
+          </div>
+
+          <div class="choices" style="margin-top:14px;">
+            <button class="btn btn-red" type="button" id="againBtn">再测一次（回到 Q1）</button>
+            <button class="btn btn-gray" type="button" id="goQ19Btn">去 Q19（改用场景题）</button>
+          </div>
+        `;
+
+        document.getElementById("againBtn").addEventListener("click", () => setRoute("Q1"));
+        document.getElementById("goQ19Btn").addEventListener("click", () => setRoute("Q19"));
+        return;
+      }
+
+      // Unknown route fallback
+      app.innerHTML = `
+        <div class="sectionTag">Oops</div>
+        <div class="qTitle">找不到页面：${escapeHTML(route)}</div>
+        <p class="qDesc">可能是链接写错了。回到 Q1 再出发吧。</p>
+        <div class="choices">
+          <button class="btn btn-red" type="button" id="backBtn">回到 Q1</button>
+        </div>
+      `;
+      document.getElementById("backBtn").addEventListener("click", () => setRoute("Q1"));
+    }
+
+    function prettyNextLabel(next){
+      if (next.startsWith("Q")) return next;
+      if (QUIZ.results[next]) return QUIZ.results[next].code;
+      return next;
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // Top actions
+    restartBtn.addEventListener("click", () => setRoute("Q1"));
+
+    copyLinkBtn.addEventListener("click", async () => {
+      const url = location.href;
+      try{
+        await navigator.clipboard.writeText(url);
+        copyLinkBtn.textContent = "已复制链接";
+        setTimeout(()=> copyLinkBtn.textContent = "复制当前题目链接", 1200);
+      }catch(e){
+        alert("复制失败：浏览器可能禁用了剪贴板权限。你也可以手动复制地址栏链接。");
+      }
+    });
+
+    // Router
+    window.addEventListener("hashchange", render);
+    render();
+  </script>
+</body>
+</html>
