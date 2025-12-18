@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Social Energy Type · Romantic Version</title>
+
   <style>
     :root{
       --bg:#ffffff;
@@ -12,11 +13,13 @@
       --border:#e9e9e9;
 
       --red:#e53935;
+      --black:#111111;
       --gray:#6b6f76;
 
       --btnText:#ffffff;
 
       --shadow: 0 10px 28px rgba(0,0,0,.06);
+      --shadowStrong: 0 12px 34px rgba(0,0,0,.10);
       --radius: 18px;
     }
 
@@ -31,9 +34,9 @@
     }
 
     .wrap{
-      max-width: 860px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 28px 18px 60px;
+      padding: 28px 18px 64px;
     }
 
     header{
@@ -41,8 +44,8 @@
       margin-bottom: 18px;
     }
     .title{
-      font-size: 26px;
-      font-weight: 750;
+      font-size: 28px;
+      font-weight: 820;
       letter-spacing: .2px;
       margin: 0 0 6px;
     }
@@ -50,6 +53,33 @@
       margin:0;
       color:var(--muted);
       font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .topActions{
+      display:flex;
+      gap:10px;
+      margin-top: 12px;
+      flex-wrap:wrap;
+    }
+    .ghostBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      color:#111;
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .ghostBtn:hover{ filter: brightness(.98); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+    .ghostBtn:active{ transform: scale(.99); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
     }
 
     .card{
@@ -61,7 +91,9 @@
     }
 
     .sectionTag{
-      display:inline-block;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       font-size: 12px;
       color: var(--muted);
       border: 1px solid var(--border);
@@ -73,7 +105,7 @@
 
     .qTitle{
       font-size: 18px;
-      font-weight: 760;
+      font-weight: 820;
       margin: 6px 0 10px;
     }
 
@@ -90,6 +122,7 @@
       margin-top: 12px;
     }
 
+    /* Buttons: game-feel */
     .btn{
       appearance:none;
       border:none;
@@ -99,18 +132,51 @@
       cursor:pointer;
       color: var(--btnText);
       font-size: 15px;
-      font-weight: 680;
+      font-weight: 760;
       letter-spacing: .2px;
-      transition: transform .06s ease, filter .15s ease;
+      position: relative;
+      overflow:hidden;
+      transition:
+        transform .08s ease,
+        filter .16s ease,
+        box-shadow .18s ease;
     }
-    .btn:active{ transform: scale(.99); }
+    .btn:active{ transform: translateY(1px) scale(.995); }
 
-    .btn-red{ background: var(--red); }
-    .btn-gray{ background: var(--gray); }
+    /* subtle sheen */
+    .btn::before{
+      content:"";
+      position:absolute;
+      inset:-40% -60%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.20), transparent);
+      opacity:0;
+      transition: opacity .18s ease;
+      pointer-events:none;
+    }
+    .btn:hover::before{ opacity:1; }
+
+    .btn-red{
+      background: var(--red);
+      box-shadow: 0 10px 26px rgba(229,57,53,.18);
+    }
+    .btn-red:hover{ filter: brightness(1.02); box-shadow: 0 12px 34px rgba(229,57,53,.22); }
+
+    .btn-black{
+      background: var(--black);
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+    }
+    .btn-black:hover{ filter: brightness(1.06); box-shadow: 0 12px 34px rgba(0,0,0,.22); }
+
+    .btn-gray{
+      background: var(--gray);
+      box-shadow: 0 10px 26px rgba(107,111,118,.14);
+    }
+    .btn-gray:hover{ filter: brightness(1.03); box-shadow: 0 12px 34px rgba(107,111,118,.18); }
 
     .btn small{
       display:block;
-      font-weight: 520;
+      font-weight: 560;
       opacity:.92;
       margin-top: 6px;
       letter-spacing: 0;
@@ -124,6 +190,7 @@
       margin-top: 14px;
       color: var(--muted);
       font-size: 12px;
+      padding: 0 4px;
     }
 
     .link{
@@ -133,15 +200,35 @@
     }
     .link:hover{ opacity:.85; }
 
-    .resultTitle{
-      font-size: 20px;
-      font-weight: 820;
-      margin: 8px 0 8px;
+    /* Pokedex result card */
+    .dexHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
     }
-    .resultHint{
-      margin:0 0 14px;
+    .dexNo{
+      font-size: 12px;
+      font-weight: 800;
+      color: #111;
+      letter-spacing: .6px;
+      border:1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background:#fff;
+      white-space: nowrap;
+    }
+    .dexName{
+      font-size: 22px;
+      font-weight: 900;
+      margin: 2px 0 4px;
+      letter-spacing: .2px;
+    }
+    .dexSub{
+      margin:0;
       color:var(--muted);
-      font-size: 14px;
+      font-size: 13px;
       white-space: pre-wrap;
     }
 
@@ -159,33 +246,62 @@
       color:#222;
       background:#fff;
     }
+    .pillStrong{
+      border-color:#d9d9d9;
+      font-weight: 750;
+    }
 
-    .topActions{
-      display:flex;
-      gap:10px;
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
       margin-top: 12px;
-      flex-wrap:wrap;
     }
-    .ghostBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      color:#111;
-      border-radius: 999px;
-      padding: 10px 12px;
-      cursor:pointer;
-      font-weight: 650;
-      font-size: 13px;
-    }
-    .ghostBtn:hover{ filter: brightness(.98); }
 
-    @media (min-width: 720px){
-      .choices{ gap: 12px; }
-      .btn{ padding: 16px 16px; }
-      .title{ font-size: 28px; }
+    .panelTitle{
+      font-size: 13px;
+      font-weight: 860;
+      margin: 0 0 8px;
+      color:#111;
+    }
+
+    .list{
+      margin:0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13.5px;
+    }
+    .list li{ margin: 6px 0; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px 12px;
+      align-items: start;
+      font-size: 13px;
+      color:#222;
+    }
+    .kv .k{ color: var(--muted); }
+    .kv .v{ font-weight: 650; }
+
+    /* Radar */
+    .radarWrap{
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background:#fff;
+    }
+    canvas{ display:block; width:100%; height:auto; }
+
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      .resultGrid{ grid-template-columns: 1.1fr .9fr; }
+      .title{ font-size: 30px; }
       .qTitle{ font-size: 19px; }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -198,7 +314,9 @@
       </div>
     </header>
 
-    <main class="card" id="app" aria-live="polite"></main>
+    <div class="grid">
+      <main class="card" id="app" aria-live="polite"></main>
+    </div>
 
     <div class="footerBar">
       <span id="progressText">Ready</span>
@@ -207,16 +325,15 @@
   </div>
 
   <script>
-    // -----------------------------
-    // Data
-    // -----------------------------
+    // ------------------------------------------------------------
+    // Social Energy Type · Romantic Version (Jump Logic)
+    // ------------------------------------------------------------
     const QUIZ = {
       meta: {
         title: "Social Energy Type · Romantic Version",
         subtitle: "designed by Pokemon Saturday Club（20 题 · 跳转式 · 单属性收敛）",
       },
 
-      // Question nodes
       nodes: {
         // Q1–Q4
         Q1: {
@@ -263,7 +380,7 @@
           ]
         },
 
-        // 分支一（高互动能量）
+        // 分支一｜高互动能量（皮卡丘 / 喵喵）
         Q5: {
           section: "分支一｜高互动能量（皮卡丘 / 喵喵）",
           title: "Q5｜互动的节奏",
@@ -304,7 +421,7 @@
           ]
         },
 
-        // 分支二（适配与共生）
+        // 分支二｜适配与共生（伊布 / 妙蛙种子）
         Q7: {
           section: "分支二｜适配与共生（伊布 / 妙蛙种子）",
           title: "Q7｜在不同世界之间",
@@ -345,7 +462,7 @@
           ]
         },
 
-        // 分支三（低刺激与高密度）
+        // 分支三｜低刺激与高密度（呆呆兽 / 可达鸭）
         Q9: {
           section: "分支三｜低刺激与高密度（呆呆兽 / 可达鸭）",
           title: "Q9｜你的“舒服感”更接近",
@@ -438,56 +555,144 @@
         },
       },
 
-      // Result nodes (placeholders; you can paste your full result text later)
+      // ------------------------------------------------------------
+      // Results: Pokédex style + Radar + Interaction Matrix
+      // 编号映射：
+      // 可达鸭=0054 妙蛙种子=0001 呆呆兽=0079 皮卡丘=0025 伊布=0133 喵喵=0052
+      // ------------------------------------------------------------
       results: {
         "R-PIKACHU": {
           name: "皮卡丘",
-          code: "R-皮卡丘",
+          no: "0025",
+          typeLine: "Feedback Loop Field · 瞬发型 Spark",
+          field: "即时反馈场",
+          keywords: ["即时回应", "互动回路", "情绪导电", "点亮空气"],
+          // Radar axes: [回弹, 安慰, 共生, 适配, 温柔, 理性]
+          radar: [95, 25, 45, 60, 40, 35],
+          attract: [
+            { no: "0052", name: "喵喵", note: "形成高反馈回路" },
+            { no: "0133", name: "伊布", note: "节奏可被迅速适配" },
+            { no: "0001", name: "妙蛙种子", note: "阶段性被承接更稳定" },
+          ],
+          drain: [
+            { no: "0079", name: "呆呆兽", note: "反馈断路，回路失效" },
+            { no: "0054", name: "可达鸭", note: "刺激过强，触发过载" },
+          ],
           hint:
 `你走进场域时，空气会更快闭合回路。
-互动像弹簧：对方给你一个信号，你会立刻回弹。`
+对方给你一个信号，你会立刻回弹。`
         },
+
         "R-SLOWPOKE": {
           name: "呆呆兽",
-          code: "R-呆呆兽",
+          no: "0079",
+          typeLine: "Comfy Field · 迟缓型 Lag",
+          field: "安慰剂场",
+          keywords: ["Comfy", "降噪", "模糊现实", "短暂逃离"],
+          radar: [20, 95, 55, 35, 60, 40],
+          attract: [
+            { no: "0054", name: "可达鸭", note: "降噪缓冲信息过载" },
+            { no: "0025", name: "皮卡丘", note: "短期对冲节奏（像刹车片）" },
+            { no: "0052", name: "喵喵", note: "提供无评判的安全感" },
+          ],
+          drain: [
+            { no: "0025", name: "皮卡丘", note: "长期被频繁刺激拖垮" },
+            { no: "0133", name: "伊布", note: "持续变化打乱舒适区" },
+          ],
           hint:
 `你带来一种 Comfy 的降噪感。
 靠近你的人常会放慢节奏，暂时把烦恼放在门外。`
         },
+
         "R-BULBASAUR": {
           name: "妙蛙种子",
-          code: "R-妙蛙种子",
+          no: "0001",
+          typeLine: "Symbiotic Presence Field · 共生型 Growth",
+          field: "共生陪伴场",
+          keywords: ["稳定在场", "自然共生", "情绪落地", "温和坚持"],
+          radar: [35, 60, 95, 45, 70, 55],
+          attract: [
+            { no: "0054", name: "可达鸭", note: "情绪与认知双承接" },
+            { no: "0079", name: "呆呆兽", note: "共享低刺激场域" },
+            { no: "0052", name: "喵喵", note: "保护未说出口的情绪" },
+          ],
+          drain: [
+            { no: "0025", name: "皮卡丘", note: "长期高输出被榨干" },
+            { no: "0133", name: "伊布", note: "价值不稳定降低安全感" },
+          ],
           hint:
 `你像一片稳定的自然环境。
 情绪在你这里可以落地，关系在你这里慢慢生长。`
         },
+
         "R-EEVEE": {
           name: "伊布",
-          code: "R-伊布",
+          no: "0133",
+          typeLine: "Adaptive Mirror Field · 可塑型 Adaptive",
+          field: "适配映射场",
+          keywords: ["六边形", "理解一切", "圆滑", "易被投射"],
+          radar: [55, 45, 55, 95, 55, 65],
+          attract: [
+            { no: "0025", name: "皮卡丘", note: "高效互动快速成型" },
+            { no: "0052", name: "喵喵", note: "社交风格高度兼容" },
+            { no: "0079", name: "呆呆兽", note: "获得节奏与边界校准" },
+          ],
+          drain: [
+            { no: "0001", name: "妙蛙种子", note: "被期待固定立场" },
+            { no: "0054", name: "可达鸭", note: "承接过多复杂信息" },
+          ],
           hint:
 `你像镜面：能适配，也能映射。
-别人会觉得被理解，但也可能对你的“真实立场”感到好奇。`
+别人会觉得被理解，但也可能对你的真实立场感到好奇。`
         },
+
         "R-MEOWTH": {
           name: "喵喵",
-          code: "R-喵喵",
+          no: "0052",
+          typeLine: "Soft Mask Field · 表演型 Performative",
+          field: "柔性面具场",
+          keywords: ["温柔包装", "克制表达", "善意外显", "怕伤人"],
+          radar: [45, 55, 70, 60, 95, 40],
+          attract: [
+            { no: "0025", name: "皮卡丘", note: "舞台与即时回馈" },
+            { no: "0001", name: "妙蛙种子", note: "被看见真实内核" },
+            { no: "0133", name: "伊布", note: "被理解多层结构" },
+          ],
+          drain: [
+            { no: "0079", name: "呆呆兽", note: "得不到回应会自我怀疑" },
+            { no: "0054", name: "可达鸭", note: "直接表达易刺破防护层" },
+          ],
           hint:
 `你用温柔包裹关系。
 你会先照顾他人的感受，让场面安全、精致、可持续。`
         },
+
         "R-PSYDUCK": {
           name: "可达鸭",
-          code: "R-可达鸭",
+          no: "0054",
+          typeLine: "Cognitive Overflow Field · 溢出型 Overflow",
+          field: "理性溢出场",
+          keywords: ["理性密集", "信息过载", "理解很深", "表达跳跃"],
+          radar: [30, 45, 60, 70, 45, 95],
+          attract: [
+            { no: "0001", name: "妙蛙种子", note: "稳定承接最安心" },
+            { no: "0079", name: "呆呆兽", note: "降低系统噪音" },
+            { no: "0133", name: "伊布", note: "被快速读懂与翻译" },
+          ],
+          drain: [
+            { no: "0025", name: "皮卡丘", note: "刺激过强触发过载" },
+            { no: "0052", name: "喵喵", note: "表达直率造成误伤" },
+          ],
           hint:
 `你是理性密度很高的场域。
 你理解得深，但输出有时直接或跳跃，让人短暂困惑。`
-        }
+        },
       }
     };
 
-    // -----------------------------
-    // Helpers
-    // -----------------------------
+    // ------------------------------------------------------------
+    // Helpers / Router
+    // ------------------------------------------------------------
     const app = document.getElementById("app");
     const progressText = document.getElementById("progressText");
     const restartBtn = document.getElementById("restartBtn");
@@ -497,39 +702,139 @@
       const hash = location.hash.replace("#", "").trim();
       return hash || "Q1";
     }
+    function setRoute(id){ location.hash = "#" + id; }
+    function isQuestion(id){ return Boolean(QUIZ.nodes[id]); }
+    function isResult(id){ return Boolean(QUIZ.results[id]); }
 
-    function setRoute(id){
-      location.hash = "#" + id;
-    }
-
-    function isQuestion(id){
-      return Boolean(QUIZ.nodes[id]);
-    }
-
-    function isResult(id){
-      return Boolean(QUIZ.results[id]);
-    }
-
+    // 依次：A红、B黑、C灰，其余统一灰
     function buttonClassByIndex(i){
-      // A is red; others are gray (your color rule)
-      return i === 0 ? "btn btn-red" : "btn btn-gray";
+      if (i === 0) return "btn btn-red";
+      if (i === 1) return "btn btn-black";
+      return "btn btn-gray";
     }
 
+    function prettyNextLabel(next){
+      if (next.startsWith("Q")) return next;
+      if (QUIZ.results[next]) return QUIZ.results[next].no; // ← 关键：题目提示显示编号
+      return next;
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ------------------------------------------------------------
+    // Radar Drawing (no external libs)
+    // axes: [回弹, 安慰, 共生, 适配, 温柔, 理性]
+    // ------------------------------------------------------------
+    const RADAR_AXES = ["回弹", "安慰", "共生", "适配", "温柔", "理性"];
+
+    function drawRadar(canvas, values){
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w/2, cy = h/2;
+      const r = Math.min(w, h) * 0.34;
+
+      ctx.clearRect(0,0,w,h);
+
+      // background
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0,0,w,h);
+
+      // grid
+      const levels = 4;
+      ctx.strokeStyle = "rgba(0,0,0,0.10)";
+      ctx.lineWidth = 1;
+
+      for(let lv=1; lv<=levels; lv++){
+        const rr = r * (lv/levels);
+        ctx.beginPath();
+        for(let i=0;i<RADAR_AXES.length;i++){
+          const ang = (Math.PI*2)*(i/RADAR_AXES.length) - Math.PI/2;
+          const x = cx + rr*Math.cos(ang);
+          const y = cy + rr*Math.sin(ang);
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // axes lines + labels
+      ctx.strokeStyle = "rgba(0,0,0,0.12)";
+      for(let i=0;i<RADAR_AXES.length;i++){
+        const ang = (Math.PI*2)*(i/RADAR_AXES.length) - Math.PI/2;
+        const x = cx + r*Math.cos(ang);
+        const y = cy + r*Math.sin(ang);
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.lineTo(x,y);
+        ctx.stroke();
+
+        // label
+        const lx = cx + (r + 18)*Math.cos(ang);
+        const ly = cy + (r + 18)*Math.sin(ang);
+        ctx.fillStyle = "rgba(0,0,0,0.68)";
+        ctx.font = "12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif";
+        ctx.textAlign = (Math.cos(ang) > 0.2) ? "left" : (Math.cos(ang) < -0.2 ? "right" : "center");
+        ctx.textBaseline = (Math.sin(ang) > 0.2) ? "top" : (Math.sin(ang) < -0.2 ? "bottom" : "middle");
+        ctx.fillText(RADAR_AXES[i], lx, ly);
+      }
+
+      // polygon
+      const norm = values.map(v => Math.max(0, Math.min(100, v)) / 100);
+      ctx.beginPath();
+      for(let i=0;i<RADAR_AXES.length;i++){
+        const ang = (Math.PI*2)*(i/RADAR_AXES.length) - Math.PI/2;
+        const x = cx + (r*norm[i])*Math.cos(ang);
+        const y = cy + (r*norm[i])*Math.sin(ang);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+
+      // fill + stroke (neutral gray tone)
+      ctx.fillStyle = "rgba(0,0,0,0.10)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(0,0,0,0.35)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // points
+      ctx.fillStyle = "rgba(0,0,0,0.55)";
+      for(let i=0;i<RADAR_AXES.length;i++){
+        const ang = (Math.PI*2)*(i/RADAR_AXES.length) - Math.PI/2;
+        const x = cx + (r*norm[i])*Math.cos(ang);
+        const y = cy + (r*norm[i])*Math.sin(ang);
+        ctx.beginPath();
+        ctx.arc(x, y, 3.2, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // ------------------------------------------------------------
+    // Render
+    // ------------------------------------------------------------
     function render(){
       const route = getRoute();
 
-      // Update footer
+      // footer progress
       if (route.startsWith("Q")){
         progressText.textContent = route + " / Q20";
       } else {
         progressText.textContent = "Result";
       }
 
+      // Question
       if (isQuestion(route)){
         const q = QUIZ.nodes[route];
 
         app.innerHTML = `
-          <div class="sectionTag">${escapeHTML(q.section || "")}</div>
+          <div class="sectionTag">🌿 ${escapeHTML(q.section || "")}</div>
           <div class="qTitle">${escapeHTML(q.title)}</div>
           ${q.desc ? `<p class="qDesc">${escapeHTML(q.desc)}</p>` : ""}
           <div class="choices" id="choices"></div>
@@ -551,31 +856,115 @@
         return;
       }
 
+      // Result
       if (isResult(route)){
         const r = QUIZ.results[route];
+
         app.innerHTML = `
-          <div class="sectionTag">结果页</div>
-          <div class="resultTitle">${escapeHTML(r.code)} · ${escapeHTML(r.name)}</div>
-          <p class="resultHint">${escapeHTML(r.hint || "")}</p>
+          <div class="sectionTag">📟 结果页 · Pokédex</div>
+
+          <div class="dexHeader">
+            <div>
+              <div class="dexName">${escapeHTML(r.name)}</div>
+              <p class="dexSub">${escapeHTML(r.typeLine)}\n${escapeHTML(r.field)}</p>
+            </div>
+            <div class="dexNo">No.${escapeHTML(r.no)}</div>
+          </div>
 
           <div class="pillRow">
-            <span class="pill">单属性 · 单匹配</span>
-            <span class="pill">Social Energy Type</span>
+            <span class="pill pillStrong">单属性 · 单匹配</span>
             <span class="pill">Romantic Version</span>
+            <span class="pill">Pokemon Saturday Club</span>
+          </div>
+
+          <div class="resultGrid">
+            <div class="card" style="box-shadow:none; border-radius:16px; padding:14px; border:1px solid var(--border);">
+              <div class="panelTitle">你带来的能量场（他人感受到的第一层变化）</div>
+              <p class="dexSub" style="margin:0 0 10px; color:#222;">${escapeHTML(r.hint || "")}</p>
+
+              <div class="panelTitle" style="margin-top:10px;">关键词</div>
+              <div class="pillRow" id="kwRow"></div>
+
+              <div class="panelTitle" style="margin-top:12px;">社交相性</div>
+              <div class="kv">
+                <div class="k">容易吸引</div>
+                <div class="v" id="attractLine"></div>
+
+                <div class="k">容易消耗</div>
+                <div class="v" id="drainLine"></div>
+              </div>
+
+              <div class="panelTitle" style="margin-top:12px;">注释</div>
+              <ul class="list" id="notesList"></ul>
+            </div>
+
+            <div class="card" style="box-shadow:none; border-radius:16px; padding:14px; border:1px solid var(--border);">
+              <div class="panelTitle">Energy Field Radar</div>
+              <div class="radarWrap">
+                <canvas id="radar" width="520" height="360"></canvas>
+              </div>
+              <p class="dexSub" style="margin:10px 0 0;">维度：回弹 / 安慰 / 共生 / 适配 / 温柔 / 理性</p>
+            </div>
           </div>
 
           <div class="choices" style="margin-top:14px;">
             <button class="btn btn-red" type="button" id="againBtn">再测一次（回到 Q1）</button>
-            <button class="btn btn-gray" type="button" id="goQ19Btn">去 Q19（改用场景题）</button>
+            <button class="btn btn-black" type="button" id="goQ19Btn">去 Q19（用“场景题”直接收敛）</button>
+            <button class="btn btn-gray" type="button" id="copyResultBtn">复制结果（No.+名称）</button>
           </div>
         `;
 
+        // keywords
+        const kwRow = document.getElementById("kwRow");
+        (r.keywords || []).forEach(k => {
+          const span = document.createElement("span");
+          span.className = "pill";
+          span.textContent = k;
+          kwRow.appendChild(span);
+        });
+
+        // attract/drain line
+        const attractLine = document.getElementById("attractLine");
+        const drainLine = document.getElementById("drainLine");
+        attractLine.textContent = (r.attract || []).map(x => `No.${x.no} ${x.name}`).join(" · ");
+        drainLine.textContent = (r.drain || []).map(x => `No.${x.no} ${x.name}`).join(" · ");
+
+        // notes list
+        const notesList = document.getElementById("notesList");
+        (r.attract || []).forEach(x => {
+          const li = document.createElement("li");
+          li.textContent = `吸引：No.${x.no} ${x.name} — ${x.note}`;
+          notesList.appendChild(li);
+        });
+        (r.drain || []).forEach(x => {
+          const li = document.createElement("li");
+          li.textContent = `消耗：No.${x.no} ${x.name} — ${x.note}`;
+          notesList.appendChild(li);
+        });
+
+        // radar
+        const canvas = document.getElementById("radar");
+        drawRadar(canvas, r.radar || [50,50,50,50,50,50]);
+
+        // actions
         document.getElementById("againBtn").addEventListener("click", () => setRoute("Q1"));
         document.getElementById("goQ19Btn").addEventListener("click", () => setRoute("Q19"));
+        document.getElementById("copyResultBtn").addEventListener("click", async () => {
+          const text = `Social Energy Type · Romantic Version — No.${r.no} ${r.name}`;
+          try{
+            await navigator.clipboard.writeText(text);
+            const btn = document.getElementById("copyResultBtn");
+            btn.textContent = "已复制";
+            setTimeout(()=> btn.textContent = "复制结果（No.+名称）", 1200);
+          }catch(e){
+            alert("复制失败：浏览器可能禁用了剪贴板权限。你也可以手动复制。");
+          }
+        });
+
         return;
       }
 
-      // Unknown route fallback
+      // fallback
       app.innerHTML = `
         <div class="sectionTag">Oops</div>
         <div class="qTitle">找不到页面：${escapeHTML(route)}</div>
@@ -587,22 +976,9 @@
       document.getElementById("backBtn").addEventListener("click", () => setRoute("Q1"));
     }
 
-    function prettyNextLabel(next){
-      if (next.startsWith("Q")) return next;
-      if (QUIZ.results[next]) return QUIZ.results[next].code;
-      return next;
-    }
-
-    function escapeHTML(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
+    // ------------------------------------------------------------
     // Top actions
+    // ------------------------------------------------------------
     restartBtn.addEventListener("click", () => setRoute("Q1"));
 
     copyLinkBtn.addEventListener("click", async () => {
@@ -616,7 +992,7 @@
       }
     });
 
-    // Router
+    // router
     window.addEventListener("hashchange", render);
     render();
   </script>
