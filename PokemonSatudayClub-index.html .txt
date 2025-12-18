@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roxy quiz testing 1.0</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      padding: 24px 24px 32px;
+    }
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    /* 已答徽章：玫红底 + 粉字 */
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #ff1493;  /* 玫红底 */
+      color: #ffe4f0;       /* 粉色字 */
+    }
+    .progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0 16px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      position: absolute;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      transition: width 0.25s ease;
+    }
+    .question-card {
+      margin-top: 12px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+    .question-text {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .question-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .option-item {
+      margin-bottom: 8px;
+    }
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.05s;
+    }
+    .option-label:hover {
+      background: #f3f4ff;
+      border-color: #c7d2fe;
+      transform: translateY(-1px);
+    }
+    .option-label input {
+      accent-color: #3b82f6;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      gap: 12px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.05s, box-shadow 0.1s;
+      white-space: nowrap;
+    }
+    button:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      color: white;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .btn-danger:hover {
+      filter: brightness(1.05);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #6b7280;
+    }
+    .btn-ghost:hover {
+      background: #f3f4f6;
+    }
+    /* 下一题：粉色按钮 */
+    .btn-pink {
+      background: #ff69b4;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(255, 105, 180, 0.3);
+    }
+    .btn-pink:hover {
+      filter: brightness(1.05);
+    }
+    /* 提交试卷：黑色按钮 */
+    .btn-dark {
+      background: #000000;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    }
+    .btn-dark:hover {
+      filter: brightness(1.05);
+    }
+    .hidden {
+      display: none;
+    }
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+    .score-line {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .score-tag {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+    .result-detail {
+      max-height: 350px;
+      overflow-y: auto;
+      margin-top: 10px;
+      padding-right: 4px;
+    }
+    .result-item {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 13px;
+    }
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    .result-item.correct {
+      background: #ecfdf3;
+    }
+    .result-item.wrong {
+      background: #fef2f2;
+    }
+    .result-item-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .tag-correct {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #dcfce7;
+      color: #15803d;
+      margin-left: 4px;
+    }
+    .tag-wrong {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #fee2e2;
+      color: #b91c1c;
+      margin-left: 4px;
+    }
+    .small {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+    @media (max-width: 600px) {
+      .app {
+        padding: 16px;
+        border-radius: 12px;
+      }
+      .nav-buttons {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title">Roxy quiz testing 1.0</div>
+      <div class="badge" id="answered-count">已答：0 题</div>
+    </div>
+
+    <div class="progress">
+      <span id="progress-text">第 1 题 / 共 0 题</span>
+      <span id="tip-text">答完所有题目后点击“Quiz Done💓”查看结果啦 🎉</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar-inner" id="progress-bar-inner"></div>
+    </div>
+
+    <!-- 题目区域 -->
+    <div id="quiz-section">
+      <div class="question-card">
+        <div class="question-text" id="question-text">题干</div>
+        <div class="question-meta" id="question-meta">单选题 · 10 分</div>
+        <ul class="options" id="options-container">
+          <!-- 动态插入选项 -->
+        </ul>
+      </div>
+
+      <!-- 按钮顺序：Step Back - Move Forwards - Quiz Done -->
+      <div class="nav-buttons">
+        <button id="prev-btn" class="btn-secondary" disabled>← Step Back 回到过去</button>
+        <button id="next-btn" class="btn-pink">Move Forwards 向前看 →</button>
+        <button id="submit-btn" class="btn-dark">Quiz Done 我爱你 💓</button>
+      </div>
+    </div>
+
+    <!-- 结果区域 -->
+    <div id="result-section" class="hidden">
+      <div class="result">
+        <div class="score-line" id="score-line"></div>
+        <div class="score-tag" id="score-tag"></div>
+        <div class="small" id="score-extra"></div>
+
+        <div class="result-detail" id="result-detail">
+          <!-- 每题详情 -->
+        </div>
+      </div>
+
+      <div class="nav-buttons" style="margin-top:18px;">
+        <button id="restart-btn" class="btn-secondary">Try Again 让我们重新开始🕤</button>
+        <button id="back-edit-btn" class="btn-ghost">Let's Cheat 我要作弊 🤡 / Erase Them 橡皮擦 ✏️</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== 题库定义：每题 10 分，所有选项都是加分选 ==========
+    const questions = [
+      {
+        id: 1,
+        type: "single",
+        score: 10,
+        text: "Hi DreDre，爱对你来说是？",
+        options: [
+          { key: "A", text: "2只靠在一起的小猫" },
+          { key: "B", text: "耗时2年养出一颗新树苗" },
+          { key: "C", text: "某些只存在想象里的 强烈感受" },
+          { key: "D", text: "2只布满皱纹的手 紧紧牵着" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "愛しています"
+      },
+      {
+        id: 2,
+        type: "single",
+        score: 10,
+        text: "你理想的伴侣关系是？",
+        options: [
+          { key: "A", text: "两棵独立的树 根系在地下紧紧相连" },
+          { key: "B", text: "一团火焰 互相燃烧 照亮彼此" },
+          { key: "C", text: "一个安全的洞穴 共同抵御外界的风雨" },
+          { key: "D", text: "两只一同飞翔的鸟类 共同看过一片风景" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Te quiero"
+      },
+      {
+        id: 3,
+        type: "single",
+        score: 10,
+        text: "此刻你感受到的 Roxy 是？",
+        options: [
+          { key: "A", text: "凤凰形状的晚霞" },
+          { key: "B", text: "夏末在告别的云" },
+          { key: "C", text: "泳池中溅出的冰凉水花" },
+          { key: "D", text: "雷雨的夜晚" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Je t’aime"
+      },
+      {
+        id: 4,
+        type: "single",
+        score: 10,
+        text: "你想象此刻的 Roxy 是？",
+        options: [
+          { key: "A", text: "一只长着红色鼻子的鼹鼠 正忙碌地挖洞" },
+          { key: "B", text: "一只粉色毛发的兔子 用后脚努力梳理自己的毛发" },
+          { key: "C", text: "一只毛色较浅的梅花鹿 正盯着森林的深处看" },
+          { key: "D", text: "一只悠闲的小象 甩着尾巴 跟在大象背后吃草" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Ich liebe dich"
+      },
+      {
+        id: 5,
+        type: "single",
+        score: 10,
+        text: "当关系结束时，你更像是？",
+        options: [
+          { key: "A", text: "冰封的火山 外冷内热" },
+          { key: "B", text: "改道的河流 奔向春天的海洋" },
+          { key: "C", text: "被砍掉枝干的树 需要漫长的春天才能发芽" },
+          { key: "D", text: "被风吹散的云 形态改变 但依旧是云" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Ti amo"
+      },
+      {
+        id: 6,
+        type: "single",
+        score: 10,
+        text: "你更希望如何被“记住”？",
+        options: [
+          { key: "A", text: "一个有趣的灵魂 一个传奇的故事" },
+          { key: "B", text: "一个可靠的朋友 一个温暖的港湾" },
+          { key: "C", text: "一个优雅的谜 一段美丽的风景" },
+          { key: "D", text: "一个强大的生命 一段时代的开启" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "사랑합니다"
+      },
+      {
+        id: 7,
+        type: "single",
+        score: 10,
+        text: "你认为“权力”的本质是？",
+        options: [
+          { key: "A", text: "制定规则的资格" },
+          { key: "B", text: "保护所爱之人的能力" },
+          { key: "C", text: "一种可以交换一切的筹码" },
+          { key: "D", text: "一种沉重的责任" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Я тебя люблю"
+      },
+      {
+        id: 8,
+        type: "single",
+        score: 10,
+        text: "在真心话大冒险的游戏中你发现了一个 BUG，你会？",
+        options: [
+          { key: "A", text: "暗中利用 精准地让某人说出秘密" },
+          { key: "B", text: "大声告诉所有人 然后玩点更刺激的" },
+          { key: "C", text: "假装不知道 但是默默记下这个 准备下次试试" },
+          { key: "D", text: "利用 BUG 让游戏和平结束 去看电影" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "Eu amo-te"
+      },
+      {
+        id: 9,
+        type: "single",
+        score: 10,
+        text: "你如何理解“短暂的分离”？",
+        options: [
+          { key: "A", text: "是成长 为了下一次更好的相遇" },
+          { key: "B", text: "充满未知 充满希望" },
+          { key: "C", text: "也许是告别 也许是再也不见" },
+          { key: "D", text: "是浪漫的生活哲学 重逢比相遇更浪漫" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "ฉันรักคุณ"
+      },
+      {
+        id: 10,
+        type: "single",
+        score: 10,
+        text: "最后一题啦，你希望快点看到测试结果吗？",
+        options: [
+          { key: "A", text: "急急急 我是急急大国王" },
+          { key: "B", text: "不急 其中必有诈" },
+          { key: "C", text: "她怎么又试探我" },
+          { key: "D", text: "我怎么谈了个男的" }
+        ],
+        answerText: "每个选项都是正确答案，每个选项都得 10 分。",
+        explanation: "对 Roxy 来说，爱是用所有语言都说一遍我爱你。"
+      }
+    ];
+
+    // ========== 状态 ==========
+    let currentIndex = 0; // 当前题目索引
+    const userAnswers = {}; // {0:["A"],1:["B"]...}
+
+    // ========== DOM 元素 ==========
+    const questionTextEl = document.getElementById("question-text");
+    const questionMetaEl = document.getElementById("question-meta");
+    const optionsContainerEl = document.getElementById("options-container");
+    const progressTextEl = document.getElementById("progress-text");
+    const answeredCountEl = document.getElementById("answered-count");
+    const progressBarInnerEl = document.getElementById("progress-bar-inner");
+    const tipTextEl = document.getElementById("tip-text");
+
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const submitBtn = document.getElementById("submit-btn");
+
+    const quizSectionEl = document.getElementById("quiz-section");
+    const resultSectionEl = document.getElementById("result-section");
+
+    const scoreLineEl = document.getElementById("score-line");
+    const scoreTagEl = document.getElementById("score-tag");
+    const scoreExtraEl = document.getElementById("score-extra");
+    const resultDetailEl = document.getElementById("result-detail");
+
+    const restartBtn = document.getElementById("restart-btn");
+    const backEditBtn = document.getElementById("back-edit-btn");
+
+    // ========== 初始化 ==========
+    function init() {
+      if (!questions || questions.length === 0) {
+        questionTextEl.textContent = "当前没有题目，请在 JavaScript 中添加题目。";
+        optionsContainerEl.innerHTML = "";
+        return;
+      }
+      renderQuestion();
+      updateProgress();
+    }
+
+    // 计算已答题目数量
+    function getAnsweredCount() {
+      return Object.keys(userAnswers).length;
+    }
+
+    // 渲染题目
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      if (!q) return;
+
+      questionTextEl.textContent = q.text;
+      const typeLabel = q.type === "multi" ? "多选题" : "单选题";
+      questionMetaEl.textContent = `${typeLabel} · ${q.score} 分`;
+
+      optionsContainerEl.innerHTML = "";
+      const name = "q-" + currentIndex;
+      const saved = userAnswers[currentIndex] || [];
+
+      q.options.forEach(opt => {
+        const li = document.createElement("li");
+        li.className = "option-item";
+
+        const label = document.createElement("label");
+        label.className = "option-label";
+
+        const input = document.createElement("input");
+        input.type = q.type === "multi" ? "checkbox" : "radio";
+        input.name = name;
+        input.value = opt.key;
+        if (saved.includes(opt.key)) {
+          input.checked = true;
+        }
+
+        const spanKey = document.createElement("span");
+        spanKey.style.fontWeight = "600";
+        spanKey.textContent = opt.key + ".";
+
+        const spanText = document.createElement("span");
+        spanText.textContent = opt.text;
+
+        label.appendChild(input);
+        label.appendChild(spanKey);
+        label.appendChild(spanText);
+
+        li.appendChild(label);
+        optionsContainerEl.appendChild(li);
+      });
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === questions.length - 1;
+      updateProgress();
+    }
+
+    // 保存当前题目的作答
+    function saveCurrentAnswer() {
+      const q = questions[currentIndex];
+      if (!q) return;
+
+      const selector = `input[name="q-${currentIndex}"]:checked`;
+      const nodes = document.querySelectorAll(selector);
+      const selected = Array.from(nodes).map(n => n.value);
+
+      if (selected.length > 0) {
+        userAnswers[currentIndex] = selected;
+      } else {
+        delete userAnswers[currentIndex];
+      }
+      updateProgress();
+    }
+
+    // 更新进度条 & 文本
+    function updateProgress() {
+      const total = questions.length;
+      const current = currentIndex + 1;
+      const answered = getAnsweredCount();
+
+      progressTextEl.textContent = `第 ${current} 题 / 共 ${total} 题`;
+      answeredCountEl.textContent = `已答：${answered} 题`;
+
+      const percent = (answered / total) * 100;
+      progressBarInnerEl.style.width = percent + "%";
+
+      if (answered === total) {
+        tipTextEl.textContent = "已答完所有题目，可以“Quiz Done💓”查看结果啦 🎉";
+      } else {
+        tipTextEl.textContent = "🌬风向的你，有自己的节奏，请感受每一个选项。";
+      }
+    }
+
+    // 提交试卷
+    function submitQuiz() {
+      const total = questions.length;
+      const answered = getAnsweredCount();
+      if (answered < total) {
+        const confirmContinue = confirm(
+          `还有 ${total - answered} 题未作答，确认也要提交吗？`
+        );
+        if (!confirmContinue) return;
+      }
+
+      let totalScore = 0;
+      let gotScore = 0;
+
+      resultDetailEl.innerHTML = "";
+
+      questions.forEach((q, index) => {
+        totalScore += q.score;
+        const userAns = userAnswers[index] || [];
+        const hasAnswered = userAns.length > 0;
+        const isCorrect = hasAnswered; // 只要有作答就是“正确”（加分）
+
+        if (isCorrect) {
+          gotScore += q.score;
+        }
+
+        const item = document.createElement("div");
+        item.className = "result-item " + (isCorrect ? "correct" : "wrong");
+
+        const title = document.createElement("div");
+        title.className = "result-item-title";
+        title.textContent = `第 ${index + 1} 题：${q.text}`;
+        const tag = document.createElement("span");
+        tag.className = isCorrect ? "tag-correct" : "tag-wrong";
+        tag.textContent = isCorrect ? "已作答" : "未作答";
+        title.appendChild(tag);
+
+        const yourAns = document.createElement("div");
+        yourAns.textContent = "你的选择：" + (userAns.length ? userAns.join(", ") : "（没有作答）");
+
+        const correct = document.createElement("div");
+        if (q.answerText) {
+          correct.textContent = q.answerText;
+        } else {
+          correct.textContent = "正确答案：每个选项都是一种可爱的选择。";
+        }
+
+        const exp = document.createElement("div");
+        exp.textContent = "解析：" + (q.explanation || "无");
+
+        item.appendChild(title);
+        item.appendChild(yourAns);
+        item.appendChild(correct);
+        item.appendChild(exp);
+
+        resultDetailEl.appendChild(item);
+      });
+
+      const percent = Math.round((gotScore / totalScore) * 100);
+      scoreLineEl.textContent = `总分 ${gotScore} / ${totalScore} 分（正确率：${percent}%）`;
+
+      let comment = "";
+      if (percent === 100) comment = "满分。说明你认真地看完了所有关于爱的小问题 💘";
+      else if (percent >= 60) comment = "你留下了空白的地方，也许那里正好是你在思考的部分。";
+      else comment = "分数并不重要，重要的是你刚刚重新看了一遍自己对爱和关系的回答。";
+
+      scoreTagEl.textContent = comment;
+      scoreExtraEl.textContent = `共 ${questions.length} 题，你作答了 ${getAnsweredCount()} 题。每个选项都是加分项。`;
+
+      quizSectionEl.classList.add("hidden");
+      resultSectionEl.classList.remove("hidden");
+    }
+
+    // 重新开始
+    function restartQuiz() {
+      Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+      currentIndex = 0;
+      quizSectionEl.classList.remove("hidden");
+      resultSectionEl.classList.add("hidden");
+      renderQuestion();
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // 返回题目继续查看 / 修改答案
+    function backToQuiz() {
+      quizSectionEl.classList.remove("hidden");
+      resultSectionEl.classList.add("hidden");
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ========== 事件绑定 ==========
+    prevBtn.addEventListener("click", () => {
+      saveCurrentAnswer();
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      saveCurrentAnswer();
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      }
+    });
+
+    submitBtn.addEventListener("click", () => {
+      saveCurrentAnswer();
+      submitQuiz();
+    });
+
+    restartBtn.addEventListener("click", restartQuiz);
+    backEditBtn.addEventListener("click", backToQuiz);
+
+    // 启动
+    init();
+  </script>
+</body>
+</html>
